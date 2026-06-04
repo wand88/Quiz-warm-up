@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AI Sprint — Dan 1 Warm-Up Kviz">
+<meta name="author" content="Lazar Jovanović">
+<meta name="copyright" content="© 2026 Lazar Jovanović / Represent Communications. Sva prava zadržana.">
+<title>AI Sprint — Dan 1 · Warm-Up Kviz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F3EE;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE7;
+    --accent: #1A1A2E;
+    --accent2: #D4451A;
+    --accent3: #0F6E56;
+    --text: #1A1A2E;
+    --text2: #5A5A72;
+    --text3: #9090A8;
+    --border: rgba(26,26,46,0.12);
+    --border2: rgba(26,26,46,0.06);
+    --correct: #0F6E56;
+    --correct-bg: #E1F5EE;
+    --wrong: #993C1D;
+    --wrong-bg: #FAECE7;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(26,26,46,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* WATERMARK */
+  body::before {
+    content: 'LJ · REPRESENT';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-35deg);
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(28px, 6vw, 64px);
+    font-weight: 700;
+    color: rgba(26,26,46,0.028);
+    pointer-events: none;
+    z-index: 0;
+    white-space: nowrap;
+    letter-spacing: 0.2em;
+    user-select: none;
+  }
+
+  .page { position: relative; z-index: 1; }
+
+  /* HEADER */
+  .header {
+    background: var(--accent);
+    color: #fff;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--accent2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+  .header-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.3;
+  }
+  .header-subtitle {
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .header-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .progress-text {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Space Mono', monospace;
+    white-space: nowrap;
+  }
+  .progress-bar-wrap {
+    width: 80px;
+    height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* SCREEN */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* INTRO SCREEN */
+  .intro-hero {
+    text-align: center;
+    padding: 40px 0 32px;
+  }
+  .intro-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 40px;
+    background: var(--accent2);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    font-family: 'Space Mono', monospace;
+  }
+  .intro-badge::before {
+    content: '●';
+    font-size: 8px;
+  }
+  .intro-title {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .intro-title span { color: var(--accent2); }
+  .intro-desc {
+    font-size: 16px;
+    color: var(--text2);
+    max-width: 520px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+
+  .intro-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .meta-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .meta-num {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .meta-label {
+    font-size: 12px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+
+  .topics-section {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 32px;
+    text-align: left;
+  }
+  .topics-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+  }
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+  }
+  .topic-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .topic-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent2);
+    flex-shrink: 0;
+  }
+
+  /* NAME INPUT */
+  .name-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .name-label {
+    font-size: 14px;
+    color: var(--text2);
+    font-weight: 500;
+  }
+  .name-input-wrap {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    max-width: 440px;
+  }
+  .name-input {
+    flex: 1;
+    padding: 14px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .name-input:focus { border-color: var(--accent); }
+  .name-input::placeholder { color: var(--text3); }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.15s, opacity 0.15s;
+    text-decoration: none;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text2);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--surface); }
+
+  /* QUIZ SCREEN */
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .q-counter {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    letter-spacing: 0.05em;
+  }
+  .q-module {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    background: rgba(212,69,26,0.08);
+    border-radius: 20px;
+  }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 36px 32px 32px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .question-text {
+    font-size: clamp(17px, 2.5vw, 21px);
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 28px;
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    width: 100%;
+    text-align: left;
+    padding: 16px 20px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    line-height: 1.45;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: var(--surface);
+    transform: translateX(3px);
+  }
+  .option-btn:disabled { cursor: default; }
+  .option-btn.correct {
+    border-color: var(--correct);
+    background: var(--correct-bg);
+    color: var(--correct);
+  }
+  .option-btn.wrong {
+    border-color: var(--wrong);
+    background: var(--wrong-bg);
+    color: var(--wrong);
+  }
+  .option-btn.neutral-disabled {
+    opacity: 0.5;
+  }
+
+  .option-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text2);
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+  .option-btn.correct .option-letter {
+    background: var(--correct);
+    color: #fff;
+  }
+  .option-btn.wrong .option-letter {
+    background: var(--wrong);
+    color: #fff;
+  }
+
+  .feedback-box {
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin-top: 20px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    display: none;
+  }
+  .feedback-box.show { display: block; }
+  .feedback-box.correct-fb {
+    background: var(--correct-bg);
+    border-left: 4px solid var(--correct);
+    color: #085041;
+  }
+  .feedback-box.wrong-fb {
+    background: var(--wrong-bg);
+    border-left: 4px solid var(--wrong);
+    color: #4A1B0C;
+  }
+  .feedback-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .quiz-nav {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  /* RESULTS SCREEN */
+  .results-hero {
+    text-align: center;
+    padding: 40px 0 32px;
+  }
+  .results-score-ring {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+  .results-score-ring svg {
+    transform: rotate(-90deg);
+  }
+  .results-score-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .results-score-num {
+    font-size: 36px;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+    color: var(--text);
+    line-height: 1;
+  }
+  .results-score-denom {
+    font-size: 13px;
+    color: var(--text3);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .results-grade {
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .results-sub {
+    font-size: 15px;
+    color: var(--text2);
+    margin-bottom: 32px;
+  }
+
+  .results-breakdown {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .results-breakdown-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border2);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex;
+    justify-content: space-between;
+  }
+  .result-row {
+    padding: 14px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    border-bottom: 1px solid var(--border2);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .result-icon.ok { color: var(--correct); }
+  .result-icon.bad { color: var(--wrong); }
+  .result-q { flex: 1; color: var(--text2); }
+  .result-answer-wrap { text-align: right; min-width: 140px; }
+  .result-your {
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .result-correct-label {
+    font-size: 12px;
+    color: var(--correct);
+    font-weight: 600;
+  }
+
+  .results-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  /* AUTHORSHIP FOOTER */
+  .authorship {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .auth-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .auth-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .auth-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .auth-role {
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .auth-right {
+    font-size: 11px;
+    color: var(--text3);
+    text-align: right;
+    font-family: 'Space Mono', monospace;
+    line-height: 1.6;
+  }
+
+  /* ANIMATIONS */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animated { animation: slideUp 0.35s ease both; }
+
+  @keyframes pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+  }
+  .pop { animation: pop 0.3s ease; }
+
+  /* CONFETTI (canvas) */
+  #confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* LOCK OVERLAY */
+  .lock-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,46,0.7);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+  .lock-overlay.show {
+    display: flex;
+  }
+  .lock-box {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 40px 32px;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(26,26,46,0.24);
+  }
+  .lock-icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+    color: var(--accent2);
+  }
+  .lock-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .lock-text {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  .lock-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+    outline: none;
+    text-align: center;
+    background: var(--surface);
+    color: var(--text);
+  }
+  .lock-input:focus { border-color: var(--accent); }
+  .lock-error {
+    font-size: 12px;
+    color: var(--wrong);
+    min-height: 18px;
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 560px) {
+    .main { padding: 24px 16px 60px; }
+    .question-card { padding: 24px 20px 20px; }
+    .results-breakdown-header { display: none; }
+    .result-answer-wrap { min-width: auto; }
+    .authorship { flex-direction: column; align-items: flex-start; }
+    .auth-right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+
+<!-- LOCK OVERLAY -->
+<div class="lock-overlay show" id="lockOverlay" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <h2 class="lock-title" id="lockTitle">Interni kviz</h2>
+    <p class="lock-text">Ova aplikacija je namenjena isključivo polaznicima <strong>AI Sprint treninga</strong>. Unesite pristupni kod koji ste dobili od facilitatora.</p>
+    <input class="lock-input" type="password" id="lockInput" placeholder="••••••" maxlength="12" aria-label="Pristupni kod" />
+    <div class="lock-error" id="lockError" aria-live="polite"></div>
+    <button class="btn btn-primary" style="width:100%;" onclick="checkAccess()">Potvrdi</button>
+    <p style="font-size:11px;color:var(--text3);margin-top:16px;font-family:'Space Mono',monospace;">
+      © 2026 Lazar Jovanović · Represent Communications<br>
+      Neovlašćeno kopiranje zabranjeno.
+    </p>
+  </div>
+</div>
+
+<div class="page">
+  <!-- STICKY HEADER -->
+  <header class="header" id="appHeader">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="header-logo">LJ</div>
+        <div>
+          <div class="header-title">AI Sprint · Dan 1</div>
+          <div class="header-subtitle">WARM-UP KVIZ · 2026</div>
+        </div>
+      </div>
+      <div class="header-progress">
+        <span class="progress-text" id="progressText">0/20</span>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- INTRO SCREEN -->
+    <section class="screen active animated" id="introScreen" aria-label="Uvod">
+      <div class="intro-hero">
+        <div class="intro-badge">Warm-Up Kviz</div>
+        <h1 class="intro-title">Šta ste naučili<br><span>danas?</span></h1>
+        <p class="intro-desc">
+          20 pitanja iz ključnih tema Dan 1. Nema loših odgovora — ovo je refleksija znanja, ne ispit. Svaki odgovor dolazi sa objašnjenjem.
+        </p>
+      </div>
+
+      <div class="intro-meta">
+        <div class="meta-card">
+          <div class="meta-num">20</div>
+          <div class="meta-label">Pitanja</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-num">5</div>
+          <div class="meta-label">Tema</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-num">~10</div>
+          <div class="meta-label">Minuta</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-num">1</div>
+          <div class="meta-label">Pokušaj</div>
+        </div>
+      </div>
+
+      <div class="topics-section">
+        <div class="topics-title">Teme koje se provjeravaju</div>
+        <div class="topics-grid">
+          <div class="topic-tag"><div class="topic-dot"></div>Data Safety First</div>
+          <div class="topic-tag"><div class="topic-dot"></div>AI Fundamenti i GenAI</div>
+          <div class="topic-tag"><div class="topic-dot"></div>Razlike između LLM-ova</div>
+          <div class="topic-tag"><div class="topic-dot"></div>Prompt Engineering</div>
+          <div class="topic-tag"><div class="topic-dot"></div>Rad sa fajlovima i M365</div>
+          <div class="topic-tag"><div class="topic-dot"></div>ChatGPT, Claude, Copilot</div>
+        </div>
+      </div>
+
+      <div class="name-section">
+        <p class="name-label">Vaše ime (za personalizovane rezultate)</p>
+        <div class="name-input-wrap">
+          <input class="name-input" type="text" id="nameInput" placeholder="Ime i prezime..." maxlength="60" aria-label="Vaše ime" />
+          <button class="btn btn-primary" id="startBtn" onclick="startQuiz()">Kreni →</button>
+        </div>
+      </div>
+
+      <div class="authorship" style="margin-top:32px;">
+        <div class="auth-left">
+          <div class="auth-avatar">LJ</div>
+          <div>
+            <div class="auth-name">Lazar Jovanović</div>
+            <div class="auth-role">Chief Digital & AI Officer · Represent System</div>
+          </div>
+        </div>
+        <div class="auth-right">
+          AI Sprint — Dan 1 · Jun 2026<br>
+          © Represent Communications<br>
+          Interno · Nije za redistribuciju
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ SCREEN -->
+    <section class="screen" id="quizScreen" aria-label="Kviz pitanje">
+    </section>
+
+    <!-- RESULTS SCREEN -->
+    <section class="screen" id="resultsScreen" aria-label="Rezultati">
+    </section>
+
+  </main>
+</div>
+
+<script>
+const ACCESS_CODE = 'aisprint1';
+
+const QUESTIONS = [
+  {
+    module: 'Data Safety First',
+    q: 'Koje od sledećih podataka SMETE direktno uneti u AI alat bez posebne provere?',
+    opts: ['Email klijenta sa imenom i opisom problema', 'Javni opis proizvoda sa sajta kompanije', 'Ugovor sa poverljivim komercijalnim uslovima', 'Transkript internog sastanka sa imenima učesnika'],
+    correct: 1,
+    exp: 'Javni podaci sa sajta (opisi proizvoda, javne objave) su generalno bezbedni za unos u AI alat. Email sa ličnim podacima klijenta, ugovori i transkriti sa imenima zahtevaju anonimizaciju ili posebno odobrenje.'
+  },
+  {
+    module: 'Data Safety First',
+    q: 'Šta je "zlatno pravilo" sigurnosti u radu sa AI alatima prema AI Sprint materijalima?',
+    opts: [
+      'Uvek koristiti Temporary chat mod kada radite sa fajlovima',
+      'Ako podatak ne biste poslali eksternom partneru bez provere, ne unosite ga ni u AI alat bez odobrenja',
+      'Nikad ne unositi više od jednog fajla odjednom',
+      'Koristiti samo alate koje je odobrila IT služba'
+    ],
+    correct: 1,
+    exp: 'Zlatno pravilo Data Safety First modula: Ako podatak ne biste poslali eksternom partneru bez provere, nemojte ga unositi ni u AI alat bez odobrenja. Ovo je prag za svaki tip podatka.'
+  },
+  {
+    module: 'Data Safety First',
+    q: 'Koji od sledećih primera predstavlja DOBRU anonimizaciju pre unosa u AI alat?',
+    opts: [
+      'Zamena punog imena inicijalima (P.P.)',
+      'Uklanjanje svih identifikatora — ime, broj ugovora, kontakt, i zamena neutralnim opisom (npr. "Klijent 1")',
+      'Enkripcija dokumenta pre slanja',
+      'Prebacivanje dokumenta u PDF format'
+    ],
+    correct: 1,
+    exp: 'Prava anonimizacija podrazumeva uklanjanje svih identifikatora: ime, prezime, broj ugovora, email, telefon, adresa, naziv kompanije ako nije neophodan — i zamenu neutralnim opisima. Inicijali ili PDF format ne anonimizuju podatke.'
+  },
+  {
+    module: 'Data Safety First',
+    q: 'Koji je pravilan redosled bezbedog AI workflow-a prema AI Sprint metodologiji?',
+    opts: [
+      'Unos podataka → generisanje outputa → slanje klijentu',
+      'Provera podataka → anonimizacija → postavljanje granica AI-ju → provera outputa → odobrenje pre slanja',
+      'Kreiranje prompta → upload fajla → direktno slanje',
+      'Odobrenje → unos → obrada → arhiviranje'
+    ],
+    correct: 1,
+    exp: '6-koračni bezbedni AI workflow: 1) Proveri podatke, 2) Anonimizuj, 3) Postavi granice AI-ju u promptu, 4) Proveri output, 5) Odobri pre slanja ili objave, 6) Sačuvaj dobar prompt kao šablon.'
+  },
+  {
+    module: 'AI Fundamenti',
+    q: 'Generativni AI (LLM) u osnovi radi kao:',
+    opts: [
+      'Pretraživač koji indeksira internet u realnom vremenu',
+      'Prediktor narednog "tokena" na osnovu konteksta i naučenih obrazaca iz ogromnih korpusa teksta',
+      'Baza podataka koja vraća unapred definisane odgovore',
+      'Sistem koji kopira tekstove iz interneta i kombinuje ih'
+    ],
+    correct: 1,
+    exp: 'Generativni AI nije čarobnjak — on predlaže sledeće reči (tokene) na osnovu konteksta. Uči iz velikih korpusa teksta, predviđa sledeće delove teksta i daje najbolje rezultate kada mu zadamo jasnu ulogu, cilj i format.'
+  },
+  {
+    module: 'AI Fundamenti',
+    q: 'Šta je "prozor konteksta" (context window) u LLM-ovima?',
+    opts: [
+      'Grafički interfejs AI alata vidljiv na ekranu',
+      'Ograničen broj tokena koje model može da vidi i obradi odjednom u jednom razgovoru',
+      'Broj simultanih korisnika koji mogu koristiti model',
+      'Vreme koje AI treba da generiše odgovor'
+    ],
+    correct: 1,
+    exp: 'Prozor konteksta je ograničen broj tokena koje model "vidi" odjednom — to direktno utiče na rad sa dugačkim fajlovima. Kada razgovor postane predugačak, AI "zaboravlja" raniji sadržaj. Rešenje: novi chat za novi zadatak.'
+  },
+  {
+    module: 'AI Fundamenti',
+    q: 'U kojoj od sledećih situacija AI NE SME samostalno da deluje bez ljudske provere?',
+    opts: [
+      'Sažimanje internog dokumenta',
+      'Pisanje prvog drafta emaila',
+      'Slanje poruke klijentu ili donošenje odluke o zahtevu korisnika',
+      'Grupiranje korisničkih upita po temama'
+    ],
+    correct: 2,
+    exp: 'Human-in-the-loop pravilo: AI ne sme samostalno da odobri ili odbije zahtev, donese odluku o klijentu, tumači ugovor kao finalni pravni stav, šalje poruku klijentu bez provere, ili objavi sadržaj koji utiče na reputaciju brenda.'
+  },
+  {
+    module: 'Razlike između LLM-ova',
+    q: 'Microsoft Copilot se od ChatGPT-a razlikuje jer:',
+    opts: [
+      'Copilot koristi potpuno sopstveni AI model razvijen od Microsofta',
+      'Copilot kombinuje GPT + Claude unutar M365 okruženja i koristi Graph grounding za pristup vašim poslovnim podacima',
+      'Copilot je besplatan dok ChatGPT nije',
+      'Copilot može da generiše slike dok ChatGPT ne može'
+    ],
+    correct: 1,
+    exp: 'Copilot nije konkurent ChatGPT-u — on kombinuje GPT + Claude unutar M365 i Graph grounding-a, što znači da može da pristupa vašim emailovima, kalendarima, dokumentima i SharePoint sadržaju direktno.'
+  },
+  {
+    module: 'Razlike između LLM-ova',
+    q: 'Zašto se različiti LLM-ovi (ChatGPT, Claude, Gemini...) ponašaju drugačije na iste promptove?',
+    opts: [
+      'Razlikuju se samo po brzini odgovora, sve ostalo je isto',
+      'Svaki je treniran na različitim podacima, sa različitim ciljevima i od različitih kompanija',
+      'Razlikuju se isključivo po ceni pretplate',
+      'Jedina razlika je u broju jezika koje podržavaju'
+    ],
+    correct: 1,
+    exp: 'LLM je mozak, AI alat je vozilo. Različita vozila isti cilj, ali drugačija snaga i karakteristike. Svaki LLM je treniran na različitim podacima, sa različitim ciljevima i od različitih kompanija — zato se ponašaju drugačije.'
+  },
+  {
+    module: 'Razlike između LLM-ova',
+    q: 'Koji Microsoft 365 alat bi koristili za kreiranje akcionih tačaka posle internog sastanka?',
+    opts: [
+      'Outlook Copilot',
+      'PowerPoint Copilot',
+      'Teams Copilot',
+      'Word Copilot'
+    ],
+    correct: 2,
+    exp: 'Prema AI Sprint preporuci: Teams Copilot je optimalan za akcione tačke posle sastanka. Outlook Copilot — za emailove; Word Copilot — za interne briefe i FAQ-ove; PowerPoint Copilot — za prezentacije zaključaka.'
+  },
+  {
+    module: 'Prompt Engineering',
+    q: 'Šta znači "R" u RACER prompt framework-u koji je obrađen na AI Sprintu?',
+    opts: [
+      'Research — istraživanje teme pre pisanja prompta',
+      'Role — uloga koju AI treba da preuzme (npr. "Ti si senior finansijski analitičar...")',
+      'Response — format odgovora koji očekujete',
+      'Repeat — instrukcija da AI ponovi odgovor više puta'
+    ],
+    correct: 1,
+    exp: 'RACER: R = Role (uloga AI-ja), A = Action (šta tačno treba da uradi), C = Context (pozadina i kontekst), E = Example (primer kako treba da izgleda output), R = Restrictions (format, dužina, ton, ograničenja). Čak i 3 od 5 elemenata (R+A+C) dramatično poboljšavaju kvalitet.'
+  },
+  {
+    module: 'Prompt Engineering',
+    q: 'Koji od sledećih primera je DOBAR prompt prema RACER metodologiji?',
+    opts: [
+      '"Napiši mi email za klijenta."',
+      '"Reci mi nešto o AI u HR."',
+      '"Ti si senior account manager sa 10g B2B iskustva. Napiši follow-up email klijentu koji je 2 nedelje bez odgovora na ponudu vrednosti 5.000€. Ton: profesionalan ali topao. Max 150 reči, sa konkretnim CTA."',
+      '"Napravi mi neku analizu."'
+    ],
+    correct: 2,
+    exp: 'Treća opcija je dobar prompt jer sadrži ulogu (senior account manager), akciju (napiši email), kontekst (klijent bez odgovora 2 nedelje, ponuda 5.000€), i ograničenja (ton, dužina, CTA). Ostali primeri su loši promptovi — prekratki, bez konteksta i cilja.'
+  },
+  {
+    module: 'Prompt Engineering',
+    q: 'Koji "trik" sprečava AI halucinacije prema tehnici "Closed-book" opisanoj na treningu?',
+    opts: [
+      'Tražiti od AI-ja da koristi internet pretragu za svaki odgovor',
+      'Instrukcija: "Odgovaraj isključivo na osnovu priloženih fajlova. Bez eksternih činjenica. Ako podatak ne postoji, napiši da nemaš informaciju."',
+      'Pisanje prompta na engleskom jeziku uvek daje tačnije odgovore',
+      'Postavljanje istog pitanja više puta i uzimanje najčešćeg odgovora'
+    ],
+    correct: 1,
+    exp: 'Closed-book tehnika: eksplicitno ograničiti AI na priloženi materijal i zabraniti izmišljanje. Kombinuje se sa Self-check ("izlistaj 5 mesta gde možeš pogrešiti"), Verification-first (najpre lista činjenica sa referencama) i Regulatory filter.'
+  },
+  {
+    module: 'Prompt Engineering',
+    q: 'Šta CROWFG u CROWFG framework-u označava kao petu komponentu?',
+    opts: [
+      'Feedback — povratna informacija AI-ju',
+      'Format — način na koji rezultat treba da bude prikazan',
+      'Filter — filtriranje outputa',
+      'Follow-up — sledeće pitanje'
+    ],
+    correct: 1,
+    exp: 'CROWFG: C=Context, R=Role/Request, O=Objective, W=Workflows, F=Format (način prikaza rezultata), G=Guardrails (granice i ograničenja). Sličan RACER-u, ali eksplicitno uključuje metodologiju i zaštitna ograničenja.'
+  },
+  {
+    module: 'ChatGPT, Claude i Copilot',
+    q: 'ChatGPT Projects se koristi za:',
+    opts: [
+      'Jednokratne zadatke kojima je potrebna brza obrada',
+      'Grupiranje povezanih razgovora, fajlova, instrukcija i izvora koji dele isti kontekst — idealno za ponovljive poslove (nedeljni izveštaji, kampanje, analize)',
+      'Generisanje AI slika i vizuala za kampanje',
+      'Direktnu integraciju sa Google Analytics alatima'
+    ],
+    correct: 1,
+    exp: 'ChatGPT Projects su radni prostori za povezane razgovore, fajlove, instrukcije i izvore. Umesto da svaki put objašnjavate kontekst, projekat ga čuva i koristi kroz više chatova. Idealno za ponovljive poslove: nedeljni izveštaji, kampanje, analize, edukacije.'
+  },
+  {
+    module: 'ChatGPT, Claude i Copilot',
+    q: 'Šta je "Agent Mode" u ChatGPT-u?',
+    opts: [
+      'Mod u kome AI odgovara brže ali sa manje detalja',
+      'Višekorakni zadatak uz alate i izvore — AI preuzima kompleksniji zadatak sa više koraka (istraži, odluči, napiši, iteriraj), kao digitalni asistent po projektu',
+      'Poseban interfejs za programere i tehničare',
+      'Mod koji deaktivira internet pretragu radi veće sigurnosti'
+    ],
+    correct: 1,
+    exp: 'Agent Mode aktivira se kada želite da AI preuzme kompleksniji zadatak sa više koraka. Ne puštati agente na osetljive procese bez ograničenja i odobrenja. Uvek definisati: cilj, dozvole, izvore, uspešan ishod i kada treba da stane i pita čoveka.'
+  },
+  {
+    module: 'ChatGPT, Claude i Copilot',
+    q: 'Koji Claude "oblik" bi koristili za agentic zadatak koji zahteva pristup folderima na računaru i zakazane automatizacije?',
+    opts: [
+      'Claude.ai u pretraživaču (web)',
+      'Claude Code (terminal alat)',
+      'Claude Desktop — Cowork (agentski alat sa pristupom fajlovima i zakazanim zadacima)',
+      'Claude u Slack-u'
+    ],
+    correct: 2,
+    exp: 'Claude Desktop ima tri načina rada: Chat (razgovori + konektori), Cowork (agentski alat za pristup folderima, zakazane zadatke i subagente), i Code (razvoj softvera). Cowork je specijalizovan za automatizaciju i rad sa lokalnim fajlovima.'
+  },
+  {
+    module: 'Rad sa fajlovima',
+    q: 'Koji je maksimalan broj fajlova i veličina jednog fajla koji ChatGPT Plus prihvata u jednom razgovoru?',
+    opts: [
+      'Max 5 fajlova, max 100MB po fajlu',
+      'Max 20 fajlova po razgovoru, max 512MB po fajlu',
+      'Max 10 fajlova, max 1GB po fajlu',
+      'Neograničen broj fajlova, ograničena ukupna veličina na 2GB'
+    ],
+    correct: 1,
+    exp: 'ChatGPT Plus prima do 20 fajlova po razgovoru, max 512MB po fajlu. Za poverljive dokumente obavezno koristiti Temporary chat i anonimizovati pre uploada.'
+  },
+  {
+    module: 'Prompt Engineering',
+    q: 'Koji je preporučeni pristup za dobijanje poslovnog uvida (insighta) iz analize u Copilotu, umesto pukog prepričavanja podataka?',
+    opts: [
+      '"Analiziraj ovaj izveštaj." — kratki promptovi daju brže rezultate',
+      '"Analiziraj ovaj CRM Q1 izveštaj kao sales operations analitičar. Izdvoji ključne uvide, trendove, rizike i preporuke. Ne izmišljaj podatke."',
+      '"Napravi vizualizaciju svih podataka iz dokumenta."',
+      '"Prepiši izveštaj u kraćem formatu bez izmena."'
+    ],
+    correct: 1,
+    exp: 'Ne pitamo AI "Šta vidiš?" — pitamo poslovno precizno pitanje sa rolom, kontekstom i ograničenjem ("ne izmišljaj podatke"). Što je bolji poslovni kontekst, to je bolji rezultat. Razlikujemo opis od insight-a.'
+  },
+  {
+    module: 'Data Safety First',
+    q: 'Koja od sledećih radnji JE u domenu Human-in-the-loop (HITL) provjere prema AI Sprint standardu?',
+    opts: [
+      'Prepustiti AI-ju da autonomno šalje finalne izvještaje menadžmentu',
+      'Dozvoliti AI-ju da direktno ažurira CRM bez pregleda',
+      'Čovek proverava tačnost, kontekst, ton, usklađenost, rizik i odobrava output pre svake finalне upotrebe',
+      'Koristiti AI output direktno bez izmena ako izgleda dobro'
+    ],
+    correct: 2,
+    exp: 'Human-in-the-loop: čovek proverava 1) Tačnost, 2) Kontekst, 3) Ton komunikacije, 4) Usklađenost sa pravilima i zakonom, 5) Rizik (reputacioni, pravni, regulatorni), 6) Da li output može da se koristi odmah ili treba dodatnu proveru. EU AI Act ovo posmatra kao ključnu komponentu AI pismenosti.'
+  }
+];
+
+let currentQ = 0;
+let score = 0;
+let answers = [];
+let userName = '';
+let answered = false;
+
+function checkAccess() {
+  const code = document.getElementById('lockInput').value.trim().toLowerCase();
+  const errEl = document.getElementById('lockError');
+  if (code === ACCESS_CODE) {
+    document.getElementById('lockOverlay').classList.remove('show');
+    document.getElementById('nameInput').focus();
+  } else {
+    errEl.textContent = 'Pogrešan kod. Obratite se facilitatoru.';
+    document.getElementById('lockInput').value = '';
+    document.getElementById('lockInput').focus();
+    setTimeout(() => { errEl.textContent = ''; }, 3000);
+  }
+}
+
+document.getElementById('lockInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkAccess();
+});
+
+function startQuiz() {
+  userName = document.getElementById('nameInput').value.trim() || 'Polaznik';
+  showScreen('quizScreen');
+  renderQuestion();
+}
+
+document.getElementById('nameInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') startQuiz();
+});
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active', 'animated');
+  setTimeout(() => el.classList.remove('animated'), 400);
+}
+
+function updateProgress() {
+  const pct = (currentQ / QUESTIONS.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = currentQ + '/' + QUESTIONS.length;
+}
+
+function renderQuestion() {
+  answered = false;
+  updateProgress();
+  const q = QUESTIONS[currentQ];
+  const letters = ['A', 'B', 'C', 'D'];
+
+  const html = `
+    <div class="quiz-header">
+      <span class="q-counter">PITANJE ${currentQ + 1} od ${QUESTIONS.length}</span>
+      <span class="q-module">${q.module}</span>
+    </div>
+    <div class="question-card animated">
+      <p class="question-text">${q.q}</p>
+      <div class="options-list" id="optionsList">
+        ${q.opts.map((opt, i) => `
+          <button class="option-btn" onclick="selectAnswer(${i})" id="opt${i}" aria-label="Opcija ${letters[i]}: ${opt}">
+            <span class="option-letter">${letters[i]}</span>
+            <span>${opt}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="feedback-box" id="feedbackBox" aria-live="polite"></div>
+    </div>
+    <div class="quiz-nav">
+      <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>
+        ${currentQ < QUESTIONS.length - 1 ? 'Sledeće pitanje →' : 'Pogledaj rezultate →'}
+      </button>
+    </div>
+  `;
+
+  document.getElementById('quizScreen').innerHTML = html;
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = QUESTIONS[currentQ];
+  const isCorrect = idx === q.correct;
+
+  answers.push({ q: q.q, selected: idx, correct: q.correct, isCorrect, opts: q.opts });
+  if (isCorrect) score++;
+
+  const optBtns = document.querySelectorAll('.option-btn');
+  optBtns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) {
+      btn.classList.add('correct');
+    } else if (i === idx && !isCorrect) {
+      btn.classList.add('wrong');
+    } else {
+      btn.classList.add('neutral-disabled');
+    }
+  });
+
+  const fb = document.getElementById('feedbackBox');
+  fb.className = `feedback-box show ${isCorrect ? 'correct-fb' : 'wrong-fb'}`;
+  fb.innerHTML = `
+    <div class="feedback-title">${isCorrect ? '✓ Tačno!' : '✗ Netačno'}</div>
+    <div>${q.exp}</div>
+  `;
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.disabled = false;
+  nextBtn.classList.add('pop');
+  setTimeout(() => nextBtn.classList.remove('pop'), 300);
+}
+
+function nextQuestion() {
+  if (currentQ < QUESTIONS.length - 1) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  updateProgress();
+  const pct = Math.round((score / QUESTIONS.length) * 100);
+
+  let grade, gradeSub;
+  if (pct >= 90) { grade = '🏆 Odlično!'; gradeSub = 'Vi ste AI Sprint šampion Dana 1.'; }
+  else if (pct >= 75) { grade = '💡 Sjajno!'; gradeSub = 'Čvrsto razumevanje ključnih koncepata.'; }
+  else if (pct >= 55) { grade = '📈 Dobro!'; gradeSub = 'Solidna osnova — ima prostora za rast.'; }
+  else { grade = '🔁 Ponovite!'; gradeSub = 'Preporučujemo pregled materijala danas uveče.'; }
+
+  const circumference = 2 * Math.PI * 54;
+  const dashOffset = circumference - (pct / 100) * circumference;
+  const ringColor = pct >= 75 ? '#0F6E56' : pct >= 55 ? '#BA7517' : '#993C1D';
+
+  const breakdownRows = answers.map((a, i) => {
+    const letter = ['A','B','C','D'][a.selected];
+    const correctLetter = ['A','B','C','D'][a.correct];
+    return `
+      <div class="result-row">
+        <span class="result-icon ${a.isCorrect ? 'ok' : 'bad'}">${a.isCorrect ? '✓' : '✗'}</span>
+        <span class="result-q">${i+1}. ${a.q.length > 80 ? a.q.substring(0,80)+'...' : a.q}</span>
+        <div class="result-answer-wrap">
+          ${a.isCorrect
+            ? `<span class="result-correct-label">Tačno (${letter})</span>`
+            : `<span class="result-your">Vaš: ${letter}</span><br><span class="result-correct-label">Tačno: ${correctLetter}</span>`
+          }
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const html = `
+    <div class="results-hero animated">
+      <div class="results-score-ring">
+        <svg width="140" height="140" viewBox="0 0 140 140" aria-hidden="true">
+          <circle cx="70" cy="70" r="54" fill="none" stroke="rgba(26,26,46,0.08)" stroke-width="10"/>
+          <circle cx="70" cy="70" r="54" fill="none" stroke="${ringColor}" stroke-width="10"
+            stroke-dasharray="${circumference}" stroke-dashoffset="${dashOffset}"
+            stroke-linecap="round" style="transition: stroke-dashoffset 1s ease;"/>
+        </svg>
+        <div class="results-score-text">
+          <span class="results-score-num">${score}</span>
+          <span class="results-score-denom">od ${QUESTIONS.length}</span>
+        </div>
+      </div>
+      <h2 class="results-grade">${grade}</h2>
+      <p class="results-sub">${userName} · ${pct}% tačnih odgovora · ${gradeSub}</p>
+    </div>
+
+    <div class="results-breakdown animated">
+      <div class="results-breakdown-header">
+        <span>Pitanje</span>
+        <span>Odgovor</span>
+      </div>
+      ${breakdownRows}
+    </div>
+
+    <div class="results-actions">
+      <button class="btn btn-secondary" onclick="restartQuiz()">↺ Ponovi kviz</button>
+      <button class="btn btn-primary" onclick="printResults()">Sačuvaj rezultate</button>
+    </div>
+
+    <div class="authorship" style="margin-top:48px;">
+      <div class="auth-left">
+        <div class="auth-avatar">LJ</div>
+        <div>
+          <div class="auth-name">Lazar Jovanović</div>
+          <div class="auth-role">Chief Digital & AI Officer · Represent System<br>Head of AI Studio · Represent Communications</div>
+        </div>
+      </div>
+      <div class="auth-right">
+        AI Sprint · Dan 1 · Jun 2026<br>
+        © Represent Communications<br>
+        Interno · Nije za redistribuciju<br>
+        <strong>#AIStudio #AISprintSRB</strong>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('resultsScreen').innerHTML = html;
+  showScreen('resultsScreen');
+
+  if (pct >= 75) launchConfetti();
+}
+
+function restartQuiz() {
+  currentQ = 0;
+  score = 0;
+  answers = [];
+  answered = false;
+  showScreen('quizScreen');
+  renderQuestion();
+}
+
+function printResults() {
+  window.print();
+}
+
+/* CONFETTI */
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#D4451A','#0F6E56','#1A1A2E','#F0EDE7','#BA7517'];
+  const pieces = Array.from({length: 120}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * -200,
+    r: 4 + Math.random() * 6,
+    d: 2 + Math.random() * 4,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    tilt: Math.random() * 10 - 10,
+    tiltAngle: 0,
+    tiltAngleInc: 0.07 + Math.random() * 0.05
+  }));
+
+  let frames = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      ctx.beginPath();
+      ctx.lineWidth = p.r / 2;
+      ctx.strokeStyle = p.color;
+      ctx.moveTo(p.x + p.tilt + p.r / 4, p.y);
+      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 4);
+      ctx.stroke();
+      p.tiltAngle += p.tiltAngleInc;
+      p.y += (Math.cos(p.d) + 2) * 1.4;
+      p.x += Math.sin(frames / 60);
+      p.tilt = 15 * Math.sin(p.tiltAngle);
+    });
+    frames++;
+    if (frames < 180) requestAnimationFrame(draw);
+    else { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+  }
+  draw();
+}
+
+/* PRINT STYLES */
+const printStyle = document.createElement('style');
+printStyle.textContent = `
+  @media print {
+    .lock-overlay, #confetti-canvas, .results-actions, .header { display: none !important; }
+    body { background: white; }
+    .authorship { page-break-inside: avoid; }
+  }
+`;
+document.head.appendChild(printStyle);
+</script>
+</body>
+</html>
